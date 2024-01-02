@@ -27,7 +27,7 @@ app.get('/', (_req, res) => {
 
 app.post('/signup', async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
   const generateUserId = uuidv1();
   const hashedpassword = await bcrypt.hash(password, 10); // Ajuste aqui
 
