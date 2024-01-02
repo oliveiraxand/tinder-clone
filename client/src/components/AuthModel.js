@@ -26,7 +26,7 @@ const AuthModel = ({ setShowModel, isSignUp }) => {
       }
       const response = await axios.post(`http://localhost:8000/${ isSignUp ? 'signup' : 'login' }`, {email, password})
       
-      setCookie('Email', response.data.email);
+      // setCookie('Email', response.data.email);
       setCookie('UserId', response.data.userId);
       setCookie('AuthToken', response.data.token);
 
@@ -35,6 +35,8 @@ const AuthModel = ({ setShowModel, isSignUp }) => {
       // console.log('chegou', success, response);
       if(success && isSignUp) { navigate('/onboarding')}
       if(success && !isSignUp) navigate('/dashboard')
+
+      window.location.reload();
 
     } catch(error) {
       console.log(error);

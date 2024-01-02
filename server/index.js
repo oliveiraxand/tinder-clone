@@ -11,13 +11,6 @@ const PORT = 8000;
 const app = express();
 app.use(cors());
 app.use(express.json())
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
 
 
 
@@ -30,7 +23,8 @@ app.post('/signup', async (req, res) => {
   // console.log(req.body);
   const generateUserId = uuidv1();
   const hashedpassword = await bcrypt.hash(password, 10); // Ajuste aqui
-
+  
+  const client = new MongoClient(uri);
   try {
     client.connect();
     const database = client.db('app-data');
@@ -64,16 +58,27 @@ app.post('/signup', async (req, res) => {
   }
 });
 
+
+
+
+
+
+
+
+
+
+
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-
+  
+  const client = new MongoClient(uri);
   try {
     await client.connect();
     const database = client.db('app-data');
     const users = database.collection('users');
 
     const user = await users.findOne({ email })
-
+    console.log(email, password, user)
     const correctPassword = await bcrypt.compare(password, user.hashed_password);
 
     if (user && correctPassword) {
@@ -91,8 +96,40 @@ app.post('/login', async (req, res) => {
   }
 })
 
+
+
+
+
+
+
+
+
+app.get('/user', async (req, res) => {
+  const client = new MongoClient(uri);
+  const userId = req.query.userId;
+  console.log(userId)
+  let connected = false;
+  try {
+    await client.connect();
+    connected = true; 
+    const database = client.db('app-data');
+    const users = database.collection('users');
+
+    const query = { user_id: userId };
+    const user = await users.findOne(query);
+    // res.status(200).json({ user, users: await users.find().toArray() }); // Adicione o await aqui
+    res.send({user});
+  } catch (e) {
+    console.error(e);
+  } finally {
+      await client.close();
+  }
+});
+
+
 app.get('/users', async (req, res) => {
   // console.log(client);
+  const client = new MongoClient(uri);
   try {
     await client.connect();
     const database = client.db('app-data');
@@ -107,7 +144,10 @@ app.get('/users', async (req, res) => {
 })
 
 app.put('/user', async (req, res) => {
+  const client = new MongoClient(uri);
   const formData = req.body.formData
+
+  
   try {
     await client.connect();
     const database = client.db('app-data')
@@ -128,7 +168,7 @@ app.put('/user', async (req, res) => {
       }
     }
     const updatedUser = await users.updateOne(query, updateDocument)
-    console.log(updatedUser, formData?.user_id)
+    // console.log(updatedUser, formData?.user_id)
     res.status(200).send(updatedUser);
   } catch(e) {
     console.error(e)
