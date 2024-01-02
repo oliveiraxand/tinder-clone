@@ -31,6 +31,7 @@ const AuthModel = ({ setShowModel, isSignUp }) => {
       setCookie('AuthToken', response.data.token);
 
       const success = response.status === 201
+      console.log(response.status);
       // console.log('chegou', success, response);
       if(success && isSignUp) { navigate('/onboarding')}
       if(success && !isSignUp) navigate('/dashboard')
