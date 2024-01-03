@@ -107,7 +107,6 @@ app.post('/login', async (req, res) => {
 app.get('/user', async (req, res) => {
   const client = new MongoClient(uri);
   const userId = req.query.userId;
-  console.log(userId)
   let connected = false;
   try {
     await client.connect();
@@ -136,6 +135,27 @@ app.get('/users', async (req, res) => {
     const users = database.collection('users');
     const returnedUsers = await users.find().toArray();
     res.send(returnedUsers);
+  }catch(e) {
+    console.error('Error: %s', e);
+  } finally {
+    await client.close();
+  }
+})
+
+app.get('/gendered-users', async (req, res) => {
+  // console.log(client);
+  const client = new MongoClient(uri);
+  const gender = req.query.gender;
+
+  try {
+    await client.connect();
+    const database = client.db('app-data');
+    const users = database.collection('users');
+    const query = { gender_identity: { $eq: gender } };
+    const foundUsers = await users.find(query).toArray();
+
+    // const returnedUsers = await users.find().toArray();
+    res.send(foundUsers);
   }catch(e) {
     console.error('Error: %s', e);
   } finally {
