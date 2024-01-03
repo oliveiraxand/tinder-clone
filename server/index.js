@@ -107,7 +107,6 @@ app.post('/login', async (req, res) => {
 app.get('/user', async (req, res) => {
   const client = new MongoClient(uri);
   const userId = req.query.userId;
-  let connected = false;
   try {
     await client.connect();
     connected = true; 
@@ -136,6 +135,37 @@ app.get('/users', async (req, res) => {
     const returnedUsers = await users.find().toArray();
     res.send(returnedUsers);
   }catch(e) {
+    console.error('Error: %s', e);
+  } finally {
+    await client.close();
+  }
+})
+
+app.get('/users', async (req, res) => {
+  const client = new MongoClient(uri);
+  const userIds = JSON.parse(req.query.userIds);
+  console.log(userIds);
+
+  try {
+    await client.connect();
+    const database = client.db('app-data');
+    const users = database.collection('users');
+    const pipeline = 
+      [
+        {
+          '$match': {
+            'user_id': {
+              '$in': userIds
+            }
+          }
+        }
+      ]
+
+    const foundUsers = users.aggregate(pipeline).toArray()
+    console.log(foundUsers)
+    res.send(foundUsers);
+    
+  } catch(e) {
     console.error('Error: %s', e);
   } finally {
     await client.close();
@@ -195,6 +225,29 @@ app.put('/user', async (req, res) => {
   } finally {
     client.close()
   }
+})
+
+app.put('/addmatch', async (req, res) => {
+  const client = new MongoClient(uri);
+  const { userId, matchedUserId } = req.body;
+
+  try {
+    await client.connect();
+    const database = client.db('app-data')
+    const users = database.collection('users');
+
+    const query = { user_id: userId }
+    const updateDocument = {
+      $push: { matches: { user_id: matchedUserId } }
+    }
+    const user = await users.updateOne(query, updateDocument)
+    res.send(user)
+  } catch(e) {
+    console.error(e)
+  } finally {
+    await client.close()
+  }
+ 
 })
 
 app.listen(PORT, () => {

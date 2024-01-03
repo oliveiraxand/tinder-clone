@@ -40,29 +40,44 @@ const Dashboard = () => {
     gentGenderedUsers()
   }, [])
 
-  console.log('gender-users', genderedUsers)
-
+  // console.log('gender-users', genderedUsers)
+  const updateMatches = async (matchedUserId) => {
+    try {
+      const response = await axios.put('http://localhost:8000/addmatch', {
+        userId,
+        matchedUserId
+      })
+      getUser();
+    } catch (e) {
+      console.error(e);
+    }
+  }
   
-  const swiped = (direction, nameToDelete) => {
-    console.log('removing: ' + nameToDelete)
+  const swiped = (direction, swipedUserId) => {
+    if(direction === 'right') {
+      updateMatches(swipedUserId)
+    }
     setLastDirection(direction)
   }
 
   const outOfFrame = (name) => {
     console.log(name + ' left the screen!')
   }
+  const matchedUserIds = user?.user?.matches.map(({ user_id }) => user_id).concat(userId);
 
+  const filteredGenderedUsers = genderedUsers.filter(
+    genderedUser => !matchedUserIds.includes(genderedUser.user_id));
   return (
     <>
       { user && <div className="dashboard">
       <ChatContainer user={user}/>
       <div className="swipe-container">
         <div className="card-container">
-          {genderedUsers?.map((genderedUsers) =>
+          {filteredGenderedUsers?.map((genderedUsers) =>
             <TinderCard 
               className='swipe'
               key={genderedUsers.first_name}
-              onSwipe={(dir) => swiped(dir, genderedUsers.first_name)}
+              onSwipe={(dir) => swiped(dir, genderedUsers.user_id)}
               onCardLeftScreen={() => outOfFrame(genderedUsers.first_name)}
             >
               <div style={{ backgroundImage: 'url(' + genderedUsers.url + ')' }} 
