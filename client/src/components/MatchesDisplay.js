@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from 'react';
 
-const MatchesDisplay = ({ matches }) => {
+const MatchesDisplay = ({ matches, setClickedUser }) => {
   const matchedUserIds = matches?.map(({ user_id }) => user_id)
   const [matchedProfile, setMatchedProfile] = useState([])
   const getMatches = async () => {
@@ -17,14 +17,14 @@ const MatchesDisplay = ({ matches }) => {
 
   useEffect(() => {
     getMatches()
-  });
+  }, []);
 
   console.log(matchedProfile)
   
   return (
     <div className="matches-display">
       {matchedProfile?.map((match, index) => (
-        <div key={index} className="match-card">
+        <div key={index} className="match-card" onClick={setClickedUser(match)}>
           <div className="img-container">
             <img src={match.url} alt={`${match.first_name} profile`} />
           </div>
