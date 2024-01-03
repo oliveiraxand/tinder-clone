@@ -24,11 +24,13 @@ const Dashboard = () => {
     }
   }
 
-  const gentGenderedUsers = async () => {
+  const getGenderedUsers = async () => {
+    const gender = user?.user.gender_interest;
     try {
       const response = await axios.get('http://localhost:8000/gendered-users', {
-        params: { gender: user?.gender_interest }
+        params: { gender }
       })
+      // console.log('gendered-', response.data);
       setGenderedUsers(response.data);
     } catch (e) {
       console.error(e);
@@ -37,13 +39,18 @@ const Dashboard = () => {
 
   useEffect(() => {
     getUser();
-    gentGenderedUsers()
-  }, [])
+  });
+
+  useEffect(() => {
+    if (user) {
+      getGenderedUsers()
+    }
+    }, [user])
 
   // console.log('gender-users', genderedUsers)
   const updateMatches = async (matchedUserId) => {
     try {
-      const response = await axios.put('http://localhost:8000/addmatch', {
+      await axios.put('http://localhost:8000/addmatch', {
         userId,
         matchedUserId
       })
@@ -54,6 +61,7 @@ const Dashboard = () => {
   }
   
   const swiped = (direction, swipedUserId) => {
+    console.log(swipedUserId)
     if(direction === 'right') {
       updateMatches(swipedUserId)
     }
@@ -67,6 +75,8 @@ const Dashboard = () => {
 
   const filteredGenderedUsers = genderedUsers.filter(
     genderedUser => !matchedUserIds?.includes(genderedUser.user_id));
+
+  // console.log('filteredGenderedUsers', filteredGenderedUsers, genderedUsers, user)
   return (
     <>
       { user && <div className="dashboard">
