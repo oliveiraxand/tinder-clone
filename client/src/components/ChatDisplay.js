@@ -6,15 +6,17 @@ import { useEffect, useState } from "react";
 const ChatDisplay = ({ user, clickedUser }) => {
   const [userMessages, setUserMessages] = useState([]);
   const [clickedUserMessages, setClickedUserMessages] = useState([]);
-  const userId = user?.user_id;
+  const userId = user?.user.user_id;
   const clickedUserId = clickedUser?.user_id;
+  // console.log(userId);
 
   const getMessages = async (userId, correspondingUserId) => {
+    // console.log('CORRESPONDING', correspondingUserId)
     try {
       const response = await axios.get('http://localhost:8000/messages', {
         params: { userId, correspondingUserId }
       });
-      // console.log(response)
+      console.log(response.data)
       return response.data;
     } catch (e) {
       console.error('Erro:', e);
@@ -31,19 +33,24 @@ const ChatDisplay = ({ user, clickedUser }) => {
     fetchData();
   }, [userId, clickedUserId]);
 
-  const messages = userMessages.map(message => ({
-    name: user?.first_name,
-    img: user?.url,
-    message: message.message,
-    timestamp: message.timestamp
-  }));
+  const messages = []
+    userMessages?.forEach(message => {
+      const formattedMessage = {}
+      formattedMessage['name'] = user?.user.first_name
+      formattedMessage['img'] = user?.user.url
+      formattedMessage['message'] = message.message
+      formattedMessage['timestamp'] = message.timestamp
+      messages.push(formattedMessage)
+    })
 
-  const clickedUserMessage = clickedUserMessages.map(message => ({
-    name: user?.first_name,
-    img: user?.url,
-    message: message.message,
-    timestamp: message.timestamp
-  }));
+  clickedUserMessages?.forEach(message => {
+    const formattedMessage = {}
+    formattedMessage['name'] = clickedUser?.first_name
+    formattedMessage['img'] = clickedUser?.url
+    formattedMessage['message'] = message.message
+    formattedMessage['timestamp'] = message.timestamp
+    messages.push(formattedMessage)
+  })
 
   const descendingOrderMessages = messages?.sort((a, b) => a.timestamp.localeCompare(b.timestamp))
 
