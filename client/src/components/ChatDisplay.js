@@ -10,29 +10,32 @@ const ChatDisplay = ({ user, clickedUser }) => {
   const clickedUserId = clickedUser?.user_id;
   // console.log(userId);
 
-  const getMessages = async (userId, correspondingUserId) => {
-    // console.log('CORRESPONDING', correspondingUserId)
+  const getUsersMessages = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/messages', {
-        params: { userId, correspondingUserId }
-      });
-      console.log(response.data)
-      return response.data;
-    } catch (e) {
-      console.error('Erro:', e);
-      return [];
+           const response = await axios.get('http://localhost:8000/messages', {
+               params: { userId: userId, correspondingUserId: clickedUserId}
+           })
+           setUserMessages(response.data)
+       } catch (error) {
+        console.log(error)
     }
-  }
+   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setUserMessages(await getMessages(userId, clickedUserId));
-      setClickedUserMessages(await getMessages(clickedUserId, userId));
-    }
+   const getClickedUsersMessages = async () => {
+       try {
+           const response = await axios.get('http://localhost:8000/messages', {
+               params: { userId: clickedUserId , correspondingUserId: userId}
+           })
+           setClickedUserMessages(response.data)
+       } catch (error) {
+           console.log(error)
+       }
+   }
 
-    fetchData();
-  }, [userId, clickedUserId]);
-
+   useEffect(() => {
+       getUsersMessages()
+       getClickedUsersMessages()
+   }, [])
   const messages = []
     userMessages?.forEach(message => {
       const formattedMessage = {}
@@ -52,13 +55,19 @@ const ChatDisplay = ({ user, clickedUser }) => {
     messages.push(formattedMessage)
   })
 
+  console.log(userMessages, clickedUserMessages);
+
   const descendingOrderMessages = messages?.sort((a, b) => a.timestamp.localeCompare(b.timestamp))
 
   
   return (
     <div className="">
       <Chat descendingOrderMessages={descendingOrderMessages}/>
-      <ChatInput />
+      <ChatInput
+        clickedUser={clickedUser}
+        getUserMessages={getUsersMessages}
+        getClickedUserMessages={getClickedUsersMessages}
+      />
     </div>
   )
 }
