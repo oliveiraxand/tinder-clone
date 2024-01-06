@@ -3,8 +3,11 @@ const { v1: uuidv1 } = require('uuid');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const uri = 'mongodb+srv://oliveiraxand:alexandre11@clustertinder.79l9pci.mongodb.net/?retryWrites=true&w=majority';
 const cors = require('cors');
+require('dotenv').config()
+
+const uri = process.env.URI;
+console.log(uri)
 
 const PORT = 8000;
 

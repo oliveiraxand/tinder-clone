@@ -49,7 +49,7 @@ const AuthModel = ({ setShowModel, isSignUp }) => {
     <div className="auth-model">
       <div className="close-icon"onClick={ handleClick }> X </div>
       <h2>{isSignUp ? 'CREATE ACCOUNT': 'LOG IN'}</h2>
-      <p>By clicking Login, you agree to our terms. Learn how we process your data in our Privacy Policy and Cookie Policy</p>
+      <p>By clicking {isSignUp ? 'CREATE ACCOUNT': 'LOG IN'}, you agree to our terms. Learn how we process your data in our Privacy Policy and Cookie Policy</p>
       <form onSubmit={ handleSubmit }>
         <input
           type="email"
@@ -75,7 +75,7 @@ const AuthModel = ({ setShowModel, isSignUp }) => {
           required={true}
           onChange={(e) => setconfirmPassword(e.target.value)}
         />}
-        <input className="secondary-button" type="submit"  />
+        <input className="secondary-button" type="submit" value={isSignUp ? 'CREATE ACCOUNT': 'LOG IN'} />
         <p>{error}</p>
       </form>
       <hr />

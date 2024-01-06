@@ -58,7 +58,7 @@ const Onboarding = () => {
 
         <form onSubmit={handleSubmit}>
           <section>
-            <label htmlFor='first_name'>First Name</label>
+            <label htmlFor='first_name'>Full Name</label>
             <input
               id='first_name'
               type='text'
@@ -182,7 +182,7 @@ const Onboarding = () => {
               value={formData.about}
               onChange={handleChange}
             />
-            <input type="submit" onClick={ handleSubmit } />
+            <input type="submit" onClick={ handleSubmit } value={"Send!"} />
           </section>
           <section>
             <lable htmlFor="">Profile Photo</lable>
