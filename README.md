@@ -1,7 +1,5 @@
 # Tinder Clone
 
-![Tinder Clone](url_da_imagem_do_seu_projeto)
-
 ## Descrição
 
 Este é um projeto de clone do Tinder, onde os usuários podem visualizar perfis de outras pessoas, deslizar para a direita para "gostar" ou para a esquerda para "não gostar", e se houver uma correspondência, iniciar uma conversa.
