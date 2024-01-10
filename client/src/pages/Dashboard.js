@@ -49,6 +49,7 @@ const Dashboard = () => {
 
   // console.log('gender-users', genderedUsers)
   const updateMatches = async (matchedUserId) => {
+    console.log(userId, matchedUserId)
     try {
       await axios.put('http://localhost:8000/addmatch', {
         userId,
@@ -61,7 +62,7 @@ const Dashboard = () => {
   }
   
   const swiped = (direction, swipedUserId) => {
-    console.log(swipedUserId)
+    // console.log(swipedUserId)
     if(direction === 'right') {
       updateMatches(swipedUserId)
     }
@@ -86,13 +87,16 @@ const Dashboard = () => {
           {filteredGenderedUsers?.map((genderedUsers) =>
             <TinderCard 
               className='swipe'
-              key={genderedUsers.first_name}
+              key={genderedUsers.user_id}
               onSwipe={(dir) => swiped(dir, genderedUsers.user_id)}
               onCardLeftScreen={() => outOfFrame(genderedUsers.first_name)}
+              swipeRequirementType={'position'}
+              swipeThreshold={50}              
             >
               <div style={{ backgroundImage: 'url(' + genderedUsers.url + ')' }} 
                 className='card'
-              ><h3>{genderedUsers.first_name}</h3>
+              >
+                  <h3>{genderedUsers.first_name}</h3>
               </div>
             </TinderCard>
           )}

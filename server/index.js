@@ -7,7 +7,7 @@ const cors = require('cors');
 require('dotenv').config()
 
 const uri = process.env.URI;
-console.log(uri)
+// console.log(uri)
 
 const PORT = 8000;
 
@@ -227,6 +227,7 @@ app.put('/user', async (req, res) => {
 app.put('/addmatch', async (req, res) => {
   const client = new MongoClient(uri);
   const { userId, matchedUserId } = req.body; 
+  console.log(userId, matchedUserId);
   try {
     await client.connect();
     const database = client.db('app-data')
@@ -259,7 +260,6 @@ app.get('/messages', async (req, res) => {
     }
 
     const foundMessages = await messages.find(query).toArray();
-    console.log(foundMessages)
     res.send(foundMessages);
   } catch (e) {
     console.error(e);
